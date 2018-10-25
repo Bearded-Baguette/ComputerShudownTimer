@@ -5,6 +5,7 @@
  */
 package computershutdowntimer;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -12,6 +13,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -258,13 +264,22 @@ public class MainWindow extends javax.swing.JFrame {
         
         // If shutdownTime is after the current time, continue on
         if(checkDate(shutDownTime))
-        {
-            
+        {            
+            try {
+                startCountdown(shutDownTime);
+            } catch (IOException ex) {
+                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         
         // Else, enter a valid time
         else
         {
+            Duration timeDifference = Duration.between(currentTime, shutDownTime);
+        
+            System.out.println(timeDifference.toMillis());
             JFrame frame = new JFrame();
             JOptionPane.showMessageDialog(frame, "Please enter a date that is after today's date");
         }
@@ -273,13 +288,49 @@ public class MainWindow extends javax.swing.JFrame {
         
         Duration timeDifference = Duration.between(currentTime, shutDownTime);
         
-        System.out.println(timeDifference);
+        System.out.println(timeDifference.toMinutes());
     }//GEN-LAST:event_setTimerButtonMouseClicked
 
     
     Boolean checkDate(LocalDateTime shutdownTime)
     {
         return shutdownTime.isAfter(currentTime);
+    }
+    
+    
+    void startCountdown(LocalDateTime shutDownTime) throws IOException, InterruptedException
+    {
+        statusText.setText("Shutdown time set. DO NOT CLOSE THIS PROGRAM!");
+        
+        Timer timer = new Timer();
+        
+        timer.schedule( new TimerTask() { 
+                public void run() {
+                    currentTime = LocalDateTime.now();
+
+                    Duration timeDifference = Duration.between(currentTime, shutDownTime);
+
+                    if (timeDifference.toMinutes() <= 0)
+                    {
+                        System.out.println("Shutting down now...");
+
+                        Runtime runtime = Runtime.getRuntime();
+                        try {
+                            Process proc = runtime.exec("shutdown -s -t 0");
+                        } catch (IOException ex) {
+                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.exit(0);
+                    }
+                    else
+                    {
+                        String status = String.valueOf(timeDifference.toMinutes()) + " minutes remaining until shutdown";
+
+                        statusText.setText(status);
+                    }
+                }
+        }, 0, 60*1000);
+        
     }
   
     
