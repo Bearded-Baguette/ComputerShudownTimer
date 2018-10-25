@@ -19,6 +19,7 @@ public class ComputerShutdownTimer {
     public static void main(String[] args) {
         JFrame mainWindow = new MainWindow();
         mainWindow.setVisible(true);
+        mainWindow.setTitle("Shutdown Timer");
     }
     
 }
