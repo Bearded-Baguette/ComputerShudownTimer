@@ -52,7 +52,6 @@ public class MainWindow extends javax.swing.JFrame {
         return shutdownTime.isAfter(currentTime);
     }
     
-    
     void startCountdown(LocalDateTime shutDownTime) throws IOException, InterruptedException
     {
         Timer timer = new Timer();
@@ -67,13 +66,13 @@ public class MainWindow extends javax.swing.JFrame {
                     {
                         System.out.println("Shutting down now...");
 
-//                        Runtime runtime = Runtime.getRuntime();
-//                        try {
-//                            Process proc = runtime.exec("shutdown -s -t 0");
-//                        } catch (IOException ex) {
-//                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-//                        }
-//                        System.exit(0);
+                        Runtime runtime = Runtime.getRuntime();
+                        try {
+                            Process proc = runtime.exec("shutdown -s -t 0");
+                        } catch (IOException ex) {
+                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.exit(0);
                     }
                     else
                     {
@@ -82,6 +81,12 @@ public class MainWindow extends javax.swing.JFrame {
                         {
                             JFrame frame = new JFrame();
                             JOptionPane.showMessageDialog(frame, "SHUTDOWN IN 1 MINUTE");
+                        }
+                        
+                        if (timeDifference.toMinutes() > 0 && timeDifference.toMinutes() <= 5)
+                        {
+                            JFrame frame = new JFrame();
+                            JOptionPane.showMessageDialog(frame, "SHUTDOWN IN 5 MINUTES");
                         }
                         
                         statusText.setText(status);
@@ -265,6 +270,7 @@ public class MainWindow extends javax.swing.JFrame {
         if(checkDate(shutDownTime))
         {            
             try {
+                dispose();
                 startCountdown(shutDownTime);
             } catch (IOException ex) {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
