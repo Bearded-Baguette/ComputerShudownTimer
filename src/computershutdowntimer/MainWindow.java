@@ -80,13 +80,13 @@ public class MainWindow extends javax.swing.JFrame {
                         if (timeDifference.toMinutes() == 0)
                         {
                             JFrame frame = new JFrame();
-                            JOptionPane.showMessageDialog(frame, "SHUTDOWN IN 1 MINUTE");
+                            JOptionPane.showMessageDialog(frame, "SHUTTING DOWN");
                         }
                         
-                        if (timeDifference.toMinutes() > 0 && timeDifference.toMinutes() <= 5)
+                        else if (timeDifference.toMinutes() > 0 && timeDifference.toMinutes() <= 5)
                         {
                             JFrame frame = new JFrame();
-                            JOptionPane.showMessageDialog(frame, "SHUTDOWN IN 5 MINUTES");
+                            JOptionPane.showMessageDialog(frame, "SHUTDOWN IN " +  String.valueOf(timeDifference.toMinutes()) + " MINUTES");
                         }
                         
                         statusText.setText(status);
